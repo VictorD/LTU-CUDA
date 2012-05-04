@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="LTU-CUDA">
+      <UniqueIdentifier>{9647d216-9917-4d8a-93e7-49690d36817c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LTU-CUDA\PGM">
+      <UniqueIdentifier>{739f2414-1606-4b88-8278-bf5989223289}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LTU-CUDA\Morphology">
+      <UniqueIdentifier>{1d64aa1b-112e-4c81-9a83-8fc06827976b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LTU-CUDA\Morphology\kernels">
+      <UniqueIdentifier>{9829b43b-113f-4286-8aca-4a6e060f2367}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LTU-CUDA\Base">
+      <UniqueIdentifier>{984e44a1-5ada-4827-96dd-7250677dcd0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LTU-CUDA\Base\kernels">
+      <UniqueIdentifier>{3b676fe8-ca04-4212-be83-ab8294b00d23}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="src\ltucuda\morphology\morphology.cu">
+      <Filter>LTU-CUDA\Morphology</Filter>
+    </CudaCompile>
+    <CudaCompile Include="src\ltucuda\pgm\pgm.cu">
+      <Filter>LTU-CUDA\PGM</Filter>
+    </CudaCompile>
+    <CudaCompile Include="src\test.cpp" />
+    <CudaCompile Include="src\ltucuda\ltucuda.cu">
+      <Filter>LTU-CUDA\Base</Filter>
+    </CudaCompile>
+    <CudaCompile Include="src\ltucuda\pinnedmem.cu">
+      <Filter>LTU-CUDA\Base</Filter>
+    </CudaCompile>
+    <CudaCompile Include="src\ltucuda\kernels\fill.cu">
+      <Filter>LTU-CUDA\Base\kernels</Filter>
+    </CudaCompile>
+    <CudaCompile Include="src\ltucuda\kernels\transpose.cu">
+      <Filter>LTU-CUDA\Base\kernels</Filter>
+    </CudaCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\ltucuda\morphology\morphology.cuh">
+      <Filter>LTU-CUDA\Morphology</Filter>
+    </None>
+    <None Include="src\ltucuda\pgm\pgm.cuh">
+      <Filter>LTU-CUDA\PGM</Filter>
+    </None>
+    <None Include="src\ltucuda\morphology\kernels\VHGW.cuh">
+      <Filter>LTU-CUDA\Morphology\kernels</Filter>
+    </None>
+    <None Include="src\ltucuda\morphology\kernels\generic.cuh">
+      <Filter>LTU-CUDA\Morphology\kernels</Filter>
+    </None>
+    <None Include="src\ltucuda\morphology\kernels\3x3.cuh">
+      <Filter>LTU-CUDA\Morphology\kernels</Filter>
+    </None>
+    <None Include="src\ltucuda\pinnedmem.cuh">
+      <Filter>LTU-CUDA\Base</Filter>
+    </None>
+    <None Include="src\ltucuda\ltucuda.cuh">
+      <Filter>LTU-CUDA\Base</Filter>
+    </None>
+    <None Include="src\ltucuda\kernels\fill.cuh">
+      <Filter>LTU-CUDA\Base\kernels</Filter>
+    </None>
+    <None Include="src\ltucuda\kernels\transpose.cuh">
+      <Filter>LTU-CUDA\Base\kernels</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\ltucuda\pgm\pgmb_io.cpp">
+      <Filter>LTU-CUDA\PGM</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ltucuda\pgm\pgmb_io.hpp">
+      <Filter>LTU-CUDA\PGM</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
