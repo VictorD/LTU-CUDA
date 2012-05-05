@@ -1,13 +1,11 @@
 #include <iostream>
 #include <memory>
 #include <cassert>
-#include <thrust/device_ptr.h>
-#include <thrust/fill.h>
-#include "ltucuda/pgm/pgm.cuh"
 #include "ltucuda/ltucuda.cuh"
+#include "ltucuda/pgm/pgm.cuh"
 #include "ltucuda/kernels/transpose.cuh"
 #include "ltucuda/morphology/morphology.cuh"
-
+#include "ltucuda/pinnedmem.cuh"
 void setDevice();
 int resetDevice();
 void showMemUsage();
@@ -17,7 +15,7 @@ void showMemUsage();
  */ 
 void  testErosion(cudaPaddedImage input, cudaImage output, rect2d roi, morphMask mask, const char* filenameOut, const char* textOnError) {
 	performErosion(getData(input), getPitch(input), getData(output), getPitch(output), roi, mask, input.border);
-
+	 
 	if (filenameOut != NULL) {
 		float *host_out = copyImageToHost(output);
 		printf("output width: %d , height: %d\n", output.width, output.height);
@@ -40,7 +38,7 @@ int main( int argc, const char* argv[] )
 	float *host_out = copyImageToHost(paddedImage.image);
 	savePGM("fillTest.pgm", host_out, paddedImage.image.width, paddedImage.image.height);
 	freeHost(host_out, PINNED);
-	//return 0;
+
 	/*
 		Diagonal erosion 3x3
 	*/
@@ -77,23 +75,6 @@ int main( int argc, const char* argv[] )
 	host_out = copyImageToHost(flippedImage);
 	savePGM("horizontalTransposeVHGW.pgm", host_out, flippedImage.width, flippedImage.height);
 	freeHost(host_out, PINNED);
-
-	/*
-		31 erosions with 3x3
-	*/
-	/*unsigned char diag3[] = {0,0,1,0,1,0,1,0,0};
-	morphMask diagonalTbt = createTBTMask(diag3);
-
-	for(int i = 0; i < 7; i++) {
-		performErosion(getData(paddedImage), getPitch(paddedImage), getBorderOffsetImagePtr(paddedOut), getPitch(paddedOut), imageSize, diagonalTbt, border);
-		performErosion(getData(paddedOut), getPitch(paddedOut), getBorderOffsetImagePtr(paddedImage), getPitch(paddedImage), imageSize, diagonalTbt, border);
-		if (i == 6)
-			performErosion(getData(paddedImage), getPitch(paddedImage), getData(image), getPitch(image), imageSize, diagonalTbt, border);
-	}
-	host_out = copyImageToHost(image);
-	savePGM("diagTest2.pgm", host_out, image.width, image.height);
-	freeHost(host_out, PINNED);*/
-
 
 	cudaFree(getData(flippedImage));
 	cudaFree(getData(flippedOut));

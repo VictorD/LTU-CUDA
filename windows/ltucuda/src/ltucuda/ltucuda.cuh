@@ -1,8 +1,6 @@
 #ifndef _LTU_CUDA_BASE_H_
 #define _LTU_CUDA_BASE_H_
 
-#include "pinnedmem.cuh"
-
 #ifdef __cplusplus
 #define EXTERN extern "C"
 #else

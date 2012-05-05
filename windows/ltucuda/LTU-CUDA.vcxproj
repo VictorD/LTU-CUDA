@@ -17,7 +17,6 @@
     <CudaCompile Include="src\ltucuda\morphology\morphology.cu" />
     <CudaCompile Include="src\ltucuda\pgm\pgm.cu" />
     <CudaCompile Include="src\ltucuda\pinnedmem.cu" />
-    <CudaCompile Include="src\test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\ltucuda\kernels\fill.cuh" />
@@ -39,10 +38,11 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{96E36D62-2E3E-4D39-8004-35ACB49A102E}</ProjectGuid>
     <RootNamespace>LTU_CUDA</RootNamespace>
+    <ProjectName>ltucudalib</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -65,6 +65,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <TargetName>ltucuda</TargetName>
+    <OutDir>$(SolutionDir)lib</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>

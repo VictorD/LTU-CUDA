@@ -1,4 +1,6 @@
 #include "fill.cuh"
+#include <thrust/device_ptr.h>
+#include <thrust/fill.h>
 
 __global__ void borderFillKernel(float *data, int pitch, int width, int height, float value) {
 	int x   = blockIdx.x * blockDim.x + threadIdx.x;
@@ -10,19 +12,17 @@ __global__ void borderFillKernel(float *data, int pitch, int width, int height, 
 
 }
 
-/*
-template <typename T>
-__global__ void initMatrix(T *matrix, int width, int height, T val) {
-    int idx = blockIdx.x * blockDim.x + threadIdx.x;
-
-    for (int i = idx; i < width * height; i += gridDim.x * blockDim.x) {
-        matrix[i]=val;
-    }
-}*/
-
-void fillImageBorder(cudaPaddedImage padded, float defaultValue) {
+void fillImage(cudaPaddedImage padded, float defaultValue) {
 	int steps = (padded.image.width+256)/256;
 	dim3 gridSize(steps, padded.image.height);
 	dim3 blockSize(256, 1);
 	borderFillKernel<<<gridSize, blockSize>>>(padded.image.data, padded.image.pitch/sizeof(float), padded.image.width, padded.image.height, defaultValue);
+}
+
+
+void thrustFillImage(cudaImage &image, const float value) {
+	// Fill array with defaultValue
+    thrust::device_ptr<float> dev_ptr(image.data);
+    thrust::fill(dev_ptr, dev_ptr + (image.height-1) * (image.pitch/sizeof(float)) + image.width, value);
+    exitOnError("createPaddedArray: thrust::fill");
 }

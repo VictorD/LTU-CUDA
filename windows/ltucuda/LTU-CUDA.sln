@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ltucudaLib", "LTU-CUDA.vcxproj", "{96E36D62-2E3E-4D39-8004-35ACB49A102E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ltucudaTest", "..\ltucudaTest\LTU-CUDA-Test.vcxproj", "{38EE688C-5461-4925-A49B-4DA65A557E68}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ltucudaMex", "..\ltucudaMex\ltucudaMex.vcxproj", "{9F3F567E-D24A-4E78-843A-7C2719742AD7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{96E36D62-2E3E-4D39-8004-35ACB49A102E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{96E36D62-2E3E-4D39-8004-35ACB49A102E}.Debug|Win32.Build.0 = Debug|Win32
+		{96E36D62-2E3E-4D39-8004-35ACB49A102E}.Debug|x64.ActiveCfg = Debug|Win32
+		{96E36D62-2E3E-4D39-8004-35ACB49A102E}.Release|Win32.ActiveCfg = Release|Win32
+		{96E36D62-2E3E-4D39-8004-35ACB49A102E}.Release|Win32.Build.0 = Release|Win32
+		{96E36D62-2E3E-4D39-8004-35ACB49A102E}.Release|x64.ActiveCfg = Release|Win32
+		{38EE688C-5461-4925-A49B-4DA65A557E68}.Debug|Win32.ActiveCfg = Debug|Win32
+		{38EE688C-5461-4925-A49B-4DA65A557E68}.Debug|Win32.Build.0 = Debug|Win32
+		{38EE688C-5461-4925-A49B-4DA65A557E68}.Debug|x64.ActiveCfg = Debug|Win32
+		{38EE688C-5461-4925-A49B-4DA65A557E68}.Release|Win32.ActiveCfg = Release|Win32
+		{38EE688C-5461-4925-A49B-4DA65A557E68}.Release|Win32.Build.0 = Release|Win32
+		{38EE688C-5461-4925-A49B-4DA65A557E68}.Release|x64.ActiveCfg = Release|Win32
+		{9F3F567E-D24A-4E78-843A-7C2719742AD7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9F3F567E-D24A-4E78-843A-7C2719742AD7}.Debug|Win32.Build.0 = Debug|Win32
+		{9F3F567E-D24A-4E78-843A-7C2719742AD7}.Debug|x64.ActiveCfg = Debug|x64
+		{9F3F567E-D24A-4E78-843A-7C2719742AD7}.Debug|x64.Build.0 = Debug|x64
+		{9F3F567E-D24A-4E78-843A-7C2719742AD7}.Release|Win32.ActiveCfg = Release|Win32
+		{9F3F567E-D24A-4E78-843A-7C2719742AD7}.Release|Win32.Build.0 = Release|Win32
+		{9F3F567E-D24A-4E78-843A-7C2719742AD7}.Release|x64.ActiveCfg = Release|x64
+		{9F3F567E-D24A-4E78-843A-7C2719742AD7}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

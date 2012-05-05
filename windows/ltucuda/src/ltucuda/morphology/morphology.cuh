@@ -2,6 +2,7 @@
 #define MORPHOLOGYHELPER_H_
 
 #include "../ltucuda.cuh"
+#include <cuda_runtime_api.h>
 
 enum maskType {
 	THREE_BY_THREE,

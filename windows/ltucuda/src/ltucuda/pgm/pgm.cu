@@ -1,5 +1,6 @@
 #include "pgm.cuh"
 #include "pgmb_io.hpp"
+#include "../pinnedmem.cuh"
 
 #include <iostream> // cout, cerr
 #include <fstream> // ifstream
@@ -8,6 +9,7 @@
 using namespace std;
 
 cudaImage loadImageToDevice(const char *filename) {
+	printf("oyyoyoyobo\n\n\n\n");
 	cudaImage image;
     float *host_in = loadPGM(filename, &image.width, &image.height);
 	copyImageToDevice(host_in, image);

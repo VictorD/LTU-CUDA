@@ -4,11 +4,26 @@
 #include <cassert>
 #include <stdio.h>
 #include <string.h>
-#include <thrust/device_ptr.h>
-#include <thrust/fill.h>
-
 #include "pgm/pgm.cuh"
 #include "kernels/fill.cuh"
+#include "pinnedmem.cuh"
+
+cudaPaddedImage createPaddedImage(rect2d border, rect2d size, float defaultValue) {
+	cudaPaddedImage result;
+	result.image = createImage(size.width + 2*border.width, size.height + 2*border.height, defaultValue);
+	result.border = border;
+	fillImage(result, defaultValue);
+    return result;
+}
+
+cudaImage createImage(int width, int height, float defaultValue) {
+	cudaImage image;
+	image.width  = width;
+    image.height = height;
+
+	allocImageOnDevice(image);
+    return image;
+}
 
 void allocImageOnDevice(cudaImage &image) {
 	cudaMallocPitch((void **)&image.data, (size_t*)&image.pitch, image.width * sizeof(float), image.height);
@@ -18,13 +33,6 @@ void allocImageOnDevice(cudaImage &image) {
 void setImageDeviceData(cudaImage &image, float *data) {
 	cudaMemcpy2D(image.data, image.pitch, data, image.width * sizeof(float), image.width * sizeof(float), image.height, cudaMemcpyHostToDevice);
     exitOnError("setImageDeviceData");
-}
-
-void fillImageOnDevice(cudaImage &image, const float value) {
-	// Fill array with defaultValue
-    thrust::device_ptr<float> dev_ptr(image.data);
-    thrust::fill(dev_ptr, dev_ptr + (image.height-1) * (image.pitch/sizeof(float)) + image.width, value);
-    exitOnError("createPaddedArray: thrust::fill");
 }
 
 void copyImageToDevice(float *data, cudaImage &image) {
@@ -40,31 +48,6 @@ float* copyImageToHost(cudaImage &image) {
     cudaMemcpy2D(host, image.width * sizeof(float), image.data, image.pitch, image.width*sizeof(float), image.height, cudaMemcpyDeviceToHost);
     exitOnError("copyImageToHost: copy");
     return host;
-}
-
-cudaImage createImage(int width, int height, float defaultValue) {
-	cudaImage image;
-	image.width  = width;
-    image.height = height;
-
-	allocImageOnDevice(image);
-	//fillImageOnDevice(image, defaultValue);
-/*
-    thrust::device_ptr<float> dev_ptr(image.data);
-    thrust::fill(dev_ptr, dev_ptr + (image.height-1) * (image.pitch/sizeof(float)) + image.width, defaultValue);
-    exitOnError("createPaddedArray: thrust::fill");*/
-
-    return image;
-}
-
-// Add border padding
-cudaPaddedImage createPaddedImage(rect2d border, rect2d size, float defaultValue) {
-	cudaPaddedImage result;
-	result.image = createImage(size.width + 2*border.width, size.height + 2*border.height, defaultValue);
-	result.border = border;
-	//fillImageOnDevice(result.image, defaultValue);
-	fillImageBorder(result, defaultValue);
-    return result;
 }
 
 cudaPaddedImage padImage(cudaImage image, rect2d border, int borderColor) {
