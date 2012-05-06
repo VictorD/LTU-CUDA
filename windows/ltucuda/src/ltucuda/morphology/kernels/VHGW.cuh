@@ -1,7 +1,7 @@
 #ifndef _CUDA_KERNELS_H_
 #define _CUDA_KERNELS_H_
 
-#include "../morphology.cuh"
+#include "morphology.cuh"
 
 template <class dataType, morphOperation MOP>
 __global__ void _horizontalVHGWKernel(const dataType *img, int imgStep, dataType *result, 
@@ -135,7 +135,8 @@ __global__ void _diagonalVHGWKernel(const dataType *img, int imgStep, dataType *
     unsigned int k;
     if (MOP == ERODE) {
         for(k=1;k<size; ++k) {
-            nextMin = lineIn[(center-k)*imgStep-k];
+			int minIndex = (center-k)*imgStep-k;
+            nextMin = (minIndex > 0) ? lineIn[(center-k)*imgStep-k] : 255;
             minarray[size-1-k] = min(minarray[size-k], nextMin);
 
             nextMin = lineIn[(center+k)*imgStep+k];
@@ -171,10 +172,8 @@ __global__ void _diagonalVHGWKernel(const dataType *img, int imgStep, dataType *
 	dataType *lineOut = result + starty*resultStep + x;
 	int diffX = width - x;
     int diffY = height - starty;*/
-
-
 }
-
+ 
 template <class dataType, morphOperation MOP>
 int _globalVHGW(const dataType * img, int imgStep, dataType * result, int resultStep, rect2d oSizeROI,morphMask mask, rect2d borderSize) {
     const unsigned int width = oSizeROI.width;
@@ -205,7 +204,7 @@ int _globalVHGW(const dataType * img, int imgStep, dataType * result, int result
 		// SLASH or BACKSLASH
 		default: { 
 				size = mask.height;
-					PRINTF("MASK SIZE IS: %d", size);
+				PRINTF("MASK SIZE IS: %d\n", size);
 				steps = (height+size-1)/size;
 				dim3 gridSize((width+2*(size-1)+128-1)/128, (steps+2-1)/2);
 				dim3 blockSize(128, 2);
@@ -214,16 +213,14 @@ int _globalVHGW(const dataType * img, int imgStep, dataType * result, int result
 			break;
     }
 
-#if 1
     // check for error
     cudaError_t error = cudaGetLastError();
     if(error != cudaSuccess)
     {
         // print the CUDA error message and exit
         printf("CUDA error: %s\n", cudaGetErrorString(error));
-       // exit(-1);
+        exit(-1);
     }
-#endif
 
     return LCUDA_SUCCESS;
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ltucudaLib", "LTU-CUDA.vcxproj", "{96E36D62-2E3E-4D39-8004-35ACB49A102E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ltucudalib", "LTU-CUDA.vcxproj", "{96E36D62-2E3E-4D39-8004-35ACB49A102E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ltucudaTest", "..\ltucudaTest\LTU-CUDA-Test.vcxproj", "{38EE688C-5461-4925-A49B-4DA65A557E68}"
 EndProject
@@ -17,13 +17,13 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{96E36D62-2E3E-4D39-8004-35ACB49A102E}.Debug|Win32.ActiveCfg = Debug|Win32
 		{96E36D62-2E3E-4D39-8004-35ACB49A102E}.Debug|Win32.Build.0 = Debug|Win32
-		{96E36D62-2E3E-4D39-8004-35ACB49A102E}.Debug|x64.ActiveCfg = Debug|Win32
+		{96E36D62-2E3E-4D39-8004-35ACB49A102E}.Debug|x64.ActiveCfg = Debug|x64
 		{96E36D62-2E3E-4D39-8004-35ACB49A102E}.Release|Win32.ActiveCfg = Release|Win32
 		{96E36D62-2E3E-4D39-8004-35ACB49A102E}.Release|Win32.Build.0 = Release|Win32
 		{96E36D62-2E3E-4D39-8004-35ACB49A102E}.Release|x64.ActiveCfg = Release|Win32
 		{38EE688C-5461-4925-A49B-4DA65A557E68}.Debug|Win32.ActiveCfg = Debug|Win32
 		{38EE688C-5461-4925-A49B-4DA65A557E68}.Debug|Win32.Build.0 = Debug|Win32
-		{38EE688C-5461-4925-A49B-4DA65A557E68}.Debug|x64.ActiveCfg = Debug|Win32
+		{38EE688C-5461-4925-A49B-4DA65A557E68}.Debug|x64.ActiveCfg = Debug|x64
 		{38EE688C-5461-4925-A49B-4DA65A557E68}.Release|Win32.ActiveCfg = Release|Win32
 		{38EE688C-5461-4925-A49B-4DA65A557E68}.Release|Win32.Build.0 = Release|Win32
 		{38EE688C-5461-4925-A49B-4DA65A557E68}.Release|x64.ActiveCfg = Release|Win32

@@ -1,6 +1,8 @@
 #ifndef _LTU_CUDA_BASE_H_
 #define _LTU_CUDA_BASE_H_
 
+
+
 #ifdef __cplusplus
 #define EXTERN extern "C"
 #else
@@ -38,8 +40,12 @@ typedef struct {
 void allocImageOnDevice(cudaImage &image);
 void fillImageOnDevice(cudaImage &image, const float value);
 
+cudaPaddedImage allocPaddedImageOnDevice(cudaImage image, rect2d border, float defaultValue);
+
 void copyImageToDevice(float *hostImage, cudaImage &image);
 float* copyImageToHost(cudaImage &image);
+void copyImageToHost(cudaImage &image, float* host);
+
 
 cudaImage createImage(int width, int height, float defaultValue);
 cudaPaddedImage createPaddedImage(rect2d border, rect2d size, float defaultValue);

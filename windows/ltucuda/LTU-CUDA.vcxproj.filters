@@ -14,15 +14,15 @@
       <UniqueIdentifier>{9829b43b-113f-4286-8aca-4a6e060f2367}</UniqueIdentifier>
     </Filter>
     <Filter Include="PGM">
-      <UniqueIdentifier>{739f2414-1606-4b88-8278-bf5989223289}</UniqueIdentifier>
+      <UniqueIdentifier>{18c4f9dc-45b4-449e-966f-88c5d8b481ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MatlabBridge">
+      <UniqueIdentifier>{606c8dec-2cbe-4397-9f3b-cfb6ff8a7797}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="src\ltucuda\morphology\morphology.cu">
       <Filter>Morphology</Filter>
-    </CudaCompile>
-    <CudaCompile Include="src\ltucuda\pgm\pgm.cu">
-      <Filter>PGM</Filter>
     </CudaCompile>
     <CudaCompile Include="src\ltucuda\ltucuda.cu">
       <Filter>Base</Filter>
@@ -36,22 +36,13 @@
     <CudaCompile Include="src\ltucuda\kernels\transpose.cu">
       <Filter>Base\kernels</Filter>
     </CudaCompile>
+    <CudaCompile Include="src\ltucuda\pgm\pgm.cu">
+      <Filter>PGM</Filter>
+    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\ltucuda\morphology\morphology.cuh">
       <Filter>Morphology</Filter>
-    </None>
-    <None Include="src\ltucuda\pgm\pgm.cuh">
-      <Filter>PGM</Filter>
-    </None>
-    <None Include="src\ltucuda\morphology\kernels\VHGW.cuh">
-      <Filter>Morphology\kernels</Filter>
-    </None>
-    <None Include="src\ltucuda\morphology\kernels\generic.cuh">
-      <Filter>Morphology\kernels</Filter>
-    </None>
-    <None Include="src\ltucuda\morphology\kernels\3x3.cuh">
-      <Filter>Morphology\kernels</Filter>
     </None>
     <None Include="src\ltucuda\pinnedmem.cuh">
       <Filter>Base</Filter>
@@ -65,15 +56,33 @@
     <None Include="src\ltucuda\kernels\transpose.cuh">
       <Filter>Base\kernels</Filter>
     </None>
+    <None Include="src\ltucuda\pgm\pgm.cuh">
+      <Filter>PGM</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ltucuda\pgm\pgmb_io.cpp">
       <Filter>PGM</Filter>
     </ClCompile>
+    <ClCompile Include="src\ltucuda\matlabBridge\matlabBridge.cpp">
+      <Filter>MatlabBridge</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ltucuda\pgm\pgmb_io.hpp">
       <Filter>PGM</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ltucuda\matlabBridge\matlabBridge.h">
+      <Filter>MatlabBridge</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ltucuda\morphology\kernels\3x3.cuh">
+      <Filter>Morphology\kernels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ltucuda\morphology\kernels\generic.cuh">
+      <Filter>Morphology\kernels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ltucuda\morphology\kernels\VHGW.cuh">
+      <Filter>Morphology\kernels</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

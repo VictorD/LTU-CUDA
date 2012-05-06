@@ -7,6 +7,18 @@
 #include "pgm/pgm.cuh"
 #include "kernels/fill.cuh"
 #include "pinnedmem.cuh"
+#ifdef _CHAR16T
+#define CHAR16_T
+#endif
+#include <mex.h>
+
+cudaPaddedImage allocPaddedImageOnDevice(cudaImage image, rect2d border, float defaultValue) {
+	rect2d imageSize = {image.width, image.height};
+	cudaPaddedImage padded = createPaddedImage(border, imageSize, defaultValue);
+	cudaMemcpy2D(getBorderOffsetImagePtr(padded), padded.image.pitch, image.data, image.width * sizeof(float), image.width * sizeof(float), image.height, cudaMemcpyHostToDevice);
+    exitOnError("loadPaddedImageToDevice: copy");
+	return padded;
+}
 
 cudaPaddedImage createPaddedImage(rect2d border, rect2d size, float defaultValue) {
 	cudaPaddedImage result;
@@ -20,7 +32,6 @@ cudaImage createImage(int width, int height, float defaultValue) {
 	cudaImage image;
 	image.width  = width;
     image.height = height;
-
 	allocImageOnDevice(image);
     return image;
 }
@@ -35,19 +46,29 @@ void setImageDeviceData(cudaImage &image, float *data) {
     exitOnError("setImageDeviceData");
 }
 
+
 void copyImageToDevice(float *data, cudaImage &image) {
 	allocImageOnDevice(image);
     setImageDeviceData(image, data);
 }
 
+
 float* copyImageToHost(cudaImage &image) {
     float *host;
     int bytesNeeded = image.width*image.height*sizeof(float);
     mallocHost((void**)&host,bytesNeeded, PINNED, false);
-
+	exitOnError("mallocHost Error");
+	mexPrintf("\nFetching image data from %016llX\n", image.data);
+	printf("width %d , height %d, pitch %d , host %d\n", image.width, image.height, image.pitch, host);
     cudaMemcpy2D(host, image.width * sizeof(float), image.data, image.pitch, image.width*sizeof(float), image.height, cudaMemcpyDeviceToHost);
-    exitOnError("copyImageToHost: copy");
+    exitOnError("copyImageToHost");
     return host;
+}
+
+void copyImageToHost(cudaImage &matrix, float* data) {
+	cudaMemcpy2D(data, matrix.width * sizeof(float),  matrix.data, matrix.pitch, matrix.width * sizeof(float), matrix.height, cudaMemcpyDeviceToHost);
+
+    exitOnError("copyImageToHost: copy");
 }
 
 cudaPaddedImage padImage(cudaImage image, rect2d border, int borderColor) {
@@ -93,10 +114,9 @@ void exitOnError(const char *whereAt) {
         {
             // print the CUDA error message and exit
             printf("CUDA error at %s: %s\n", whereAt, cudaGetErrorString(error));
-            exit(-1);
+            //exit(-1);
         }
 }
 
 extern void showMemUsage();
-
 

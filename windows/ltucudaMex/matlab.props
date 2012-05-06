@@ -8,7 +8,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(MatlabDirectory)extern\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MatlabInclude)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(MatlabDirectory)extern\lib\win64\microsoft</AdditionalLibraryDirectories>

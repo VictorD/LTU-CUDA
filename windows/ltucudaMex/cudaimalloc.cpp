@@ -1,31 +1,21 @@
-
-#include <mex.h>
-#include "ltucuda/ltucuda.cuh"
-
-cudaImage lcudaImageFromMX(const mxArray *mx) {
-	cudaImage tmp;
-
-	if (!mxIsSingle(mx)) {
-		mexErrMsgTxt("The input image must be of type single");
-	}
-
-	tmp.width = mxGetM(mx);
-	tmp.height = mxGetN(mx);
-	tmp.data = (float*)mxGetData(mx);
-	return tmp;
-}
-
-mxArray* lcudaMatrixToStruct(cudaImage im) {
-	return NULL;
-}
-
+#include "ltucuda/matlabBridge/matlabBridge.h"
+#include "ltucuda/pgm/pgm.cuh"
 void mexFunction(int nlhs, mxArray *plhs[],
 		int nrhs, const mxArray *prhs[])
 {
     const mxArray *mx = prhs[0];
     if (mxIsSingle(mx)) {
-        cudaImage image = lcudaImageFromMX(mx);
-      	plhs[0] = lcudaMatrixToStruct(image);
+		cudaImage image = cudaImageFromMX(mx);
+		rect2d border = {4,4}; // Extra large border for now
+		cudaPaddedImage padded = allocPaddedImageOnDevice(image, border, 255.0f);
+
+		/*cudaPaddedImage paddedAfter = cudaPaddedImageFromStruct(mxStructFromLCudaMatrix(padded));
+		float *host_out = copyImageToHost(padded.image);
+		savePGM("allocBeforeTest.pgm", host_out, padded.image.width, padded.image.height);
+		host_out = copyImageToHost(paddedAfter.image);
+		savePGM("allocAfterTest.pgm", host_out, paddedAfter.image.width, paddedAfter.image.height);
+		*/
+      	plhs[0] = mxStructFromLCudaMatrix(padded);
 
     } /*else if (mxIsUint8(mx)) {
 	    cudaImage image = cudaImageFrom8bitMX(const mx);

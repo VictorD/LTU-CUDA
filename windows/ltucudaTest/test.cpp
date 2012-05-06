@@ -34,17 +34,18 @@ int main( int argc, const char* argv[] )
 	cudaPaddedImage paddedImage = loadPaddedImageToDevice("../images/test.pgm", border, 255.0f);
 	rect2d imageSize = { paddedImage.image.width - 2 * border.width, paddedImage.image.height- 2 * border.height };
 	cudaImage output = createImage(imageSize.width, imageSize.height, 255.0f);
+	
+	float *host = new float[output.width*output.height];
+	copyImageToHost(output, host);
+	savePGM("fillTest.pgm", host, output.width, output.height);
 
-	float *host_out = copyImageToHost(paddedImage.image);
-	savePGM("fillTest.pgm", host_out, paddedImage.image.width, paddedImage.image.height);
-	freeHost(host_out, PINNED);
-
+	//mxArray* foo = mxArrayFromLCudaMatrix(paddedImage);
 	/*
 		Diagonal erosion 3x3
 	*/
 	unsigned char diag[] = {1,0,0,0,1,0,0,0,1};
 	morphMask diag3x3mask = createTBTMask(diag);
-	testErosion(paddedImage, output, imageSize, diag3x3mask, "diag3x3.pgm", "Diagonal VHGW Test");
+	//testErosion(paddedImage, output, imageSize, diag3x3mask, "diag3x3.pgm", "Diagonal VHGW Test");
 
 	/* 
 		VHGW erosion: Horizontal, vertical, diagonal
@@ -55,7 +56,7 @@ int main( int argc, const char* argv[] )
 	//testErosion(paddedImage, output, imageSize, hozMask, "horizontalVHGW.pgm", "VHGW Horizontal kernel"); // replaced with TVT below
 	testErosion(paddedImage, output, imageSize, diagMask, "diagonalVHGW.pgm", "VHGW Diagonal kernel");
 	testErosion(paddedImage, output, imageSize, vertMask, "verticalVHGW.pgm", "VHGW Vertical kernel");	
-	
+
 	// Horizontal Erosion Test Mark 2: Transpose + Vertical+ Transpose
 	cudaImage flippedImage = createTransposedImage(paddedImage.image);
 	cudaFree(getData(paddedImage));
@@ -72,7 +73,7 @@ int main( int argc, const char* argv[] )
 	
 	cudaFree(getData(flippedImage));
 	flippedImage = createTransposedImage(flippedOut);
-	host_out = copyImageToHost(flippedImage);
+	float *host_out = copyImageToHost(flippedImage);
 	savePGM("horizontalTransposeVHGW.pgm", host_out, flippedImage.width, flippedImage.height);
 	freeHost(host_out, PINNED);
 

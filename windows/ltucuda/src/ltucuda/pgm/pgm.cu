@@ -9,7 +9,6 @@
 using namespace std;
 
 cudaImage loadImageToDevice(const char *filename) {
-	printf("oyyoyoyobo\n\n\n\n");
 	cudaImage image;
     float *host_in = loadPGM(filename, &image.width, &image.height);
 	copyImageToDevice(host_in, image);
