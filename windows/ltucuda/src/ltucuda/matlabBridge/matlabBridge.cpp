@@ -1,5 +1,5 @@
 #include "matlabBridge.h"
-
+#include "../pinnedmem.cuh"
 unsigned char mlcudaGetImageDataType(const mxArray* mx) {
     return ((unsigned char*)mxGetData( mxGetField(mx, 0, "dataType") ))[0];
 }
@@ -33,27 +33,16 @@ cudaPaddedImage cudaPaddedImageFromStruct(const mxArray *mx) {
 	rect2d border = {borderWidth, borderHeight};
 	padded.border = border;
 	padded.image = im;
-
-	PRINTF("Address %d\n", im.data);
-	PRINTF("Width %d\n", im.width);
-	PRINTF("height %d\n", im.height);
-	PRINTF("pitch %d\n", im.pitch);
 	return padded;
 }
 
 mxArray* mxArrayFromLCudaMatrix(cudaPaddedImage padded) {
-	/*
-	int width = padded.image.width - 2 * padded.border.width;
-	int height = padded.image.height - 2 * padded.border.height;
-	cudaImage output;
-	output.data = getData(padded);//getBorderOffsetImagePtr(padded);
-	output.pitch = padded.image.pitch;
-	output.width = width;
-	output.height = height;
-	*/
-	mxArray* tmp = mxCreateNumericMatrix(padded.image.width, padded.image.height, mxSINGLE_CLASS, mxREAL);
-	copyImageToHost(padded.image, (float*)mxGetData(tmp));
-	
+	int width = padded.image.width - 2*padded.border.width;
+	int height = padded.image.height - 2*padded.border.height;
+	mxArray* tmp = mxCreateNumericMatrix(width, height, mxSINGLE_CLASS, mxREAL);
+	//printf("width %d , height %d\n", width, height);
+	//copyImageToHost(padded.image, (float*)mxGetData(tmp));
+	cudaMemcpy2D((float*)mxGetData(tmp), width * sizeof(float),  getBorderOffsetImagePtr(padded), padded.image.pitch, width * sizeof(float), height, cudaMemcpyDeviceToHost);
 	return tmp;
 }
 

@@ -37,9 +37,12 @@ typedef struct {
 	rect2d border;
 } cudaPaddedImage;
 
+void deviceToDevice(cudaImage &dst, float *data);
 void allocImageOnDevice(cudaImage &image);
 void fillImageOnDevice(cudaImage &image, const float value);
+void setImageDeviceData(cudaImage &image, float *data);
 
+cudaImage cloneImage(cudaImage image);
 cudaPaddedImage allocPaddedImageOnDevice(cudaImage image, rect2d border, float defaultValue);
 
 void copyImageToDevice(float *hostImage, cudaImage &image);

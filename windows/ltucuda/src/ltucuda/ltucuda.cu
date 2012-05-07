@@ -12,6 +12,21 @@
 #endif
 #include <mex.h>
 
+
+void deviceToDevice(cudaImage &dst, float *data) {
+	cudaMemcpy2D(dst.data, dst.pitch, data, dst.width * sizeof(float), dst.width * sizeof(float), dst.height, cudaMemcpyDeviceToDevice);
+    exitOnError("setImageDeviceData");
+}
+
+cudaImage cloneImage(cudaImage image) {
+	cudaImage newImg;
+	newImg.width = image.width;
+	newImg.height = image.height;
+	allocImageOnDevice(newImg);
+	deviceToDevice(newImg, image.data);
+	return newImg;
+}
+
 cudaPaddedImage allocPaddedImageOnDevice(cudaImage image, rect2d border, float defaultValue) {
 	rect2d imageSize = {image.width, image.height};
 	cudaPaddedImage padded = createPaddedImage(border, imageSize, defaultValue);
@@ -58,8 +73,7 @@ float* copyImageToHost(cudaImage &image) {
     int bytesNeeded = image.width*image.height*sizeof(float);
     mallocHost((void**)&host,bytesNeeded, PINNED, false);
 	exitOnError("mallocHost Error");
-	mexPrintf("\nFetching image data from %016llX\n", image.data);
-	printf("width %d , height %d, pitch %d , host %d\n", image.width, image.height, image.pitch, host);
+	//mexPrintf("\nFetching image data from %016llX\n", image.data);
     cudaMemcpy2D(host, image.width * sizeof(float), image.data, image.pitch, image.width*sizeof(float), image.height, cudaMemcpyDeviceToHost);
     exitOnError("copyImageToHost");
     return host;
@@ -115,6 +129,7 @@ void exitOnError(const char *whereAt) {
             // print the CUDA error message and exit
             printf("CUDA error at %s: %s\n", whereAt, cudaGetErrorString(error));
             //exit(-1);
+			system("pause");//mexCallMATLAB("pause");
         }
 }
 

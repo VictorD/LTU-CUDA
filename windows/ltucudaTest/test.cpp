@@ -39,6 +39,8 @@ int main( int argc, const char* argv[] )
 	copyImageToHost(output, host);
 	savePGM("fillTest.pgm", host, output.width, output.height);
 
+
+	cudaImage test = cloneImage(paddedImage.image);
 	//mxArray* foo = mxArrayFromLCudaMatrix(paddedImage);
 	/*
 		Diagonal erosion 3x3

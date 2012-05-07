@@ -13,5 +13,11 @@
     <ClCompile Include="cudaimget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cudaimerode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cudaimfree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

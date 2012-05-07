@@ -3,7 +3,7 @@ mexBinary    = H:\MATLAB\R2010a\bin\mex.bat
 cudaLibPath  = "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v4.2\lib\x64"
 lcudaLibPath = "E:\LTUCUDA\LTU-CUDA\windows\ltucuda\lib"
 
-OBJS= cudaimalloc.obj cudaimget.obj
+OBJS= cudaimalloc.obj cudaimget.obj cudaimerode.obj cudaimfree.obj
 LIBS= -lltucuda -lcudart
 
 all: $(OBJS)
