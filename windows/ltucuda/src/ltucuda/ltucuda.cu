@@ -73,12 +73,14 @@ void copyImageToHost(cudaImage &matrix, float* data) {
     exitOnError("copyImageToHost:");
 }
 
-cudaPaddedImage deviceAllocPadded(cudaImage image, rect2d border, float borderColor) {
+cudaPaddedImage createPaddedFromImage(cudaImage image, rect2d border, float borderColor) {
 	cudaPaddedImage padded = createPaddedImage(border, image.width, image.height, borderColor);
-    cudaMemcpy2D(getBorderOffsetImagePtr(padded), getPitch(padded), getData(image), getPitch(image), image.width*sizeof(float), image.height, cudaMemcpyHostToDevice);
+    cudaMemcpy2D(getBorderOffsetImagePtr(padded), getPitch(padded), getData(image), getPitch(image), image.width*sizeof(float), image.height, cudaMemcpyDeviceToDevice);
     exitOnError("deviceAllocPadded");
 	return padded;
 }
+
+
 
 /*
  *    Getters 

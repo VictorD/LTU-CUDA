@@ -1,5 +1,5 @@
 #include "ltucuda/matlabBridge/matlabBridge.h"
-#include "ltucuda/pinnedmem.cuh"
+#include "ltucuda/pgm/pgm.cuh"
 
 void mexFunction(int nlhs, mxArray *plhs[],
 		int nrhs, const mxArray *prhs[])
@@ -17,11 +17,13 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
     const mxArray *mx = prhs[0];
     if (mxIsSingle(mx)) {
-		cudaImage image = cudaImageFromMX(mx);
-		rect2d border = {256,256}; // Extra large border for now
-		cudaPaddedImage padded = deviceAllocPadded(image, border, 255.0f);
+		cudaImage image = imageFromMXArray(mx);
 
-      	plhs[0] = mxStructFromLCudaMatrix(padded);
+		//float *host = new float[image.width*image.height];
+		//copyImageToHost(image, host);
+		//savePGM("allocTest.pgm", host, image.width, image.height);
+
+		plhs[0] = imageToMXStruct(image);
 
     } /*else if (mxIsUint8(mx)) {
 	    cudaImage image = cudaImageFrom8bitMX(const mx);

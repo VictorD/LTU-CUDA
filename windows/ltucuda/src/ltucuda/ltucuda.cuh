@@ -44,7 +44,6 @@ void deviceFillImage(cudaImage &image, const float value);
 void copyHostToImage(cudaImage &image, float *data);
 
 cudaImage cloneImage(cudaImage image);
-cudaPaddedImage deviceAllocPadded(cudaImage image, rect2d border, float defaultValue);
 
 void deviceAllocImageWithData(cudaImage &image, float *data);
 float* copyImageToHost(cudaImage &image);
@@ -53,6 +52,7 @@ void copyDeviceToImage(cudaImage &to, float *from);
 
 cudaImage createImage(int width, int height);
 cudaPaddedImage createPaddedImage(rect2d border, int width, int height, float defaultValue);
+cudaPaddedImage createPaddedFromImage(cudaImage image, rect2d border, float defaultValue);
 
 float *getBorderOffsetImagePtr(cudaImage image);
 float *getBorderOffsetImagePtr(cudaPaddedImage padded);

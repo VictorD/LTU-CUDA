@@ -7,11 +7,11 @@
 #endif
 #include <mex.h>
 
-cudaImage cudaImageFromMX(const mxArray *mx);
-cudaPaddedImage cudaPaddedImageFromStruct(const mxArray *mx);
+cudaImage imageFromMXArray(const mxArray *mx);
+cudaImage imageFromMXStruct(const mxArray *mx);
 unsigned char mlcudaGetImageDataType(const mxArray* mx);
 
-mxArray* mxArrayFromLCudaMatrix(cudaPaddedImage padded);
-mxArray* mxStructFromLCudaMatrix(cudaPaddedImage padded);
+mxArray* imageToMXArray(cudaImage image);
+mxArray* imageToMXStruct(cudaImage image);
 
 #endif

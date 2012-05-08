@@ -29,8 +29,6 @@ int main( int argc, const char* argv[] )
 {
 	setDevice();
 
-	cudaImage test1 = loadImageToDevice("../images/test.pgm");
-
 	float maxFloat = std::numeric_limits<float>::max();
 	// Prepad border bigger than we need for simplicity and profiling (256px border is silly big; we can have an SE length of 512).	
 	rect2d border = { 256,256 }; 
@@ -38,21 +36,24 @@ int main( int argc, const char* argv[] )
 	rect2d imageSize = getNoBorderSize(paddedImage);
 	cudaImage output = createImage(imageSize.width, imageSize.height);
 	
-	float *host = new float[output.width*output.height];
-	copyImageToHost(output, host);
-	savePGM("fillTest.pgm", host, output.width, output.height);
+	cudaImage test = loadImageToDevice("../images/test.pgm");
+	cudaImage test1 = cloneImage(test);
+	cudaPaddedImage test2 = createPaddedFromImage(test, border, 255.0f);
 
+	float *host = new float[test2.image.width*test2.image.height];
+	copyImageToHost(test2.image, host);
+	savePGM("fillTest.pgm", host, test2.image.width, test2.image.height);
 
-	cudaImage test = cloneImage(paddedImage.image);
-	cudaFree(test.data);
+	cudaFree(getData(test));
+	cudaFree(getData(test1));
+	cudaFree(getData(test2));
 
-	//mxArray* foo = mxArrayFromLCudaMatrix(paddedImage);
 	/*
 		Diagonal erosion 3x3
 	*/
 	unsigned char diag[] = {1,0,0,0,1,0,0,0,1};
 	morphMask diag3x3mask = createTBTMask(diag);
-	//testErosion(paddedImage, output, imageSize, diag3x3mask, "diag3x3.pgm", "Diagonal VHGW Test");
+	testErosion(paddedImage, output, imageSize, diag3x3mask, "diag3x3.pgm", "Diagonal VHGW Test");
 
 	/* 
 		VHGW erosion: Horizontal, vertical, diagonal
