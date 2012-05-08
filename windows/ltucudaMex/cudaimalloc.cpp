@@ -18,11 +18,6 @@ void mexFunction(int nlhs, mxArray *plhs[],
     const mxArray *mx = prhs[0];
     if (mxIsSingle(mx)) {
 		cudaImage image = imageFromMXArray(mx);
-
-		//float *host = new float[image.width*image.height];
-		//copyImageToHost(image, host);
-		//savePGM("allocTest.pgm", host, image.width, image.height);
-
 		plhs[0] = imageToMXStruct(image);
 
     } /*else if (mxIsUint8(mx)) {

@@ -54,6 +54,11 @@ void copyDeviceToImage(cudaImage &dst, float *data) {
     exitOnError("copyHostToImage");
 }
 
+void copyPaddedToImage(cudaPaddedImage &src, cudaImage &dst) {
+	cudaMemcpy2D(dst.data, dst.pitch, getBorderOffsetImagePtr(src), getPitch(src.image), dst.width * sizeof(float), dst.height, cudaMemcpyDeviceToDevice);
+    exitOnError("copyHostToImage");
+}
+
 void deviceAllocImageWithData(cudaImage &image, float *data) {
 	deviceAllocImage(image);
     copyHostToImage(image, data);
