@@ -43,9 +43,8 @@ void transposeImage(float *dev_in, float *dev_out, rect2d image) {
 }
 
 cudaImage createTransposedImage(cudaImage input) {
-	 cudaImage flipped	= createImage(input.height, input.width, 255.0f);
+	 cudaImage flipped	= createImage(input.height, input.width);
 	 rect2d inputDim	= {input.width, input.height};
-
 	 transposeImage(getData(input), getData(flipped), inputDim);
 	 return flipped;
 }

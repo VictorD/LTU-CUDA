@@ -37,24 +37,24 @@ typedef struct {
 	rect2d border;
 } cudaPaddedImage;
 
-void deviceToDevice(cudaImage &dst, float *data);
-void allocImageOnDevice(cudaImage &image);
-void fillImageOnDevice(cudaImage &image, const float value);
-void setImageDeviceData(cudaImage &image, float *data);
+
+
+void deviceAllocImage(cudaImage &image);
+void deviceFillImage(cudaImage &image, const float value);
+void copyHostToImage(cudaImage &image, float *data);
 
 cudaImage cloneImage(cudaImage image);
-cudaPaddedImage allocPaddedImageOnDevice(cudaImage image, rect2d border, float defaultValue);
+cudaPaddedImage deviceAllocPadded(cudaImage image, rect2d border, float defaultValue);
 
-void copyImageToDevice(float *hostImage, cudaImage &image);
+void deviceAllocImageWithData(cudaImage &image, float *data);
 float* copyImageToHost(cudaImage &image);
-void copyImageToHost(cudaImage &image, float* host);
+void copyImageToHost(cudaImage &from, float* to);
+void copyDeviceToImage(cudaImage &to, float *from);
 
+cudaImage createImage(int width, int height);
+cudaPaddedImage createPaddedImage(rect2d border, int width, int height, float defaultValue);
 
-cudaImage createImage(int width, int height, float defaultValue);
-cudaPaddedImage createPaddedImage(rect2d border, rect2d size, float defaultValue);
-cudaPaddedImage padImage(cudaImage image, rect2d border, int borderColor);
-
-
+float *getBorderOffsetImagePtr(cudaImage image);
 float *getBorderOffsetImagePtr(cudaPaddedImage padded);
 
 int getPitch(cudaImage image);
@@ -64,6 +64,7 @@ float *getData(cudaImage image);
 float *getData(cudaPaddedImage padded);
 
 rect2d getBorder(cudaPaddedImage padded);
+rect2d getNoBorderSize(cudaPaddedImage padded);
 
 void exitOnError(const char *whereAt);
 

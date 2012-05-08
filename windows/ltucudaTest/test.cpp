@@ -28,12 +28,15 @@ void  testErosion(cudaPaddedImage input, cudaImage output, rect2d roi, morphMask
 int main( int argc, const char* argv[] )
 {
 	setDevice();
+
+	cudaImage test1 = loadImageToDevice("../images/test.pgm");
+
 	float maxFloat = std::numeric_limits<float>::max();
 	// Prepad border bigger than we need for simplicity and profiling (256px border is silly big; we can have an SE length of 512).	
 	rect2d border = { 256,256 }; 
 	cudaPaddedImage paddedImage = loadPaddedImageToDevice("../images/test.pgm", border, 255.0f);
-	rect2d imageSize = { paddedImage.image.width - 2 * border.width, paddedImage.image.height- 2 * border.height };
-	cudaImage output = createImage(imageSize.width, imageSize.height, 255.0f);
+	rect2d imageSize = getNoBorderSize(paddedImage);
+	cudaImage output = createImage(imageSize.width, imageSize.height);
 	
 	float *host = new float[output.width*output.height];
 	copyImageToHost(output, host);
@@ -41,6 +44,8 @@ int main( int argc, const char* argv[] )
 
 
 	cudaImage test = cloneImage(paddedImage.image);
+	cudaFree(test.data);
+
 	//mxArray* foo = mxArrayFromLCudaMatrix(paddedImage);
 	/*
 		Diagonal erosion 3x3
@@ -67,7 +72,7 @@ int main( int argc, const char* argv[] )
 	cudaImage flippedOut;
 	flippedOut.width = flippedSize.width;
 	flippedOut.height = flippedSize.height;
-	allocImageOnDevice(flippedOut);
+	deviceAllocImage(flippedOut);
 
 	rect2d flippedBorder = {border.height, border.width};
 	performErosion(getData(flippedImage), getPitch(flippedImage), getData(flippedOut), getPitch(flippedOut), flippedSize, vertMask, flippedBorder);

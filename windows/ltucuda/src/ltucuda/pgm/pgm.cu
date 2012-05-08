@@ -10,18 +10,17 @@ using namespace std;
 
 cudaImage loadImageToDevice(const char *filename) {
 	cudaImage image;
-    float *host_in = loadPGM(filename, &image.width, &image.height);
-	copyImageToDevice(host_in, image);
-	freeHost(host_in, REGULAR);
+    float *pgmData = loadPGM(filename, &image.width, &image.height);
+	deviceAllocImageWithData(image, pgmData);
+	freeHost(pgmData, REGULAR);
 	return image;
 }
 
 cudaPaddedImage loadPaddedImageToDevice(const char *filename, rect2d border, float defaultValue) {
 	cudaImage image;
     float *data = loadPGM(filename, &image.width, &image.height);
-	rect2d imageSize = {image.width, image.height};
 
-	cudaPaddedImage padded = createPaddedImage(border, imageSize, defaultValue);
+	cudaPaddedImage padded = createPaddedImage(border, image.width, image.height, defaultValue);
 	cudaMemcpy2D(getBorderOffsetImagePtr(padded), padded.image.pitch, data, image.width * sizeof(float), image.width * sizeof(float), image.height, cudaMemcpyHostToDevice);
     exitOnError("loadPaddedImageToDevice: copy");
 	freeHost(data, REGULAR);

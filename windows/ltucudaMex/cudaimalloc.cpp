@@ -19,7 +19,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
     if (mxIsSingle(mx)) {
 		cudaImage image = cudaImageFromMX(mx);
 		rect2d border = {256,256}; // Extra large border for now
-		cudaPaddedImage padded = allocPaddedImageOnDevice(image, border, 255.0f);
+		cudaPaddedImage padded = deviceAllocPadded(image, border, 255.0f);
 
       	plhs[0] = mxStructFromLCudaMatrix(padded);
 
