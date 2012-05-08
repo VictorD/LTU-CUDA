@@ -1,3 +1,4 @@
+#include <memory>
 #include "matlabBridge.h"
 #include "../pinnedmem.cuh"
 
@@ -58,4 +59,80 @@ mxArray* imageToMXStruct(cudaImage image) {
     mxSetField(ims, 0, "dataType", imt);
 
 	return ims;
+}
+
+bool isDiagonal(unsigned char* maskData, int width, int height);
+bool isBackslash(unsigned char* maskData, int width, int height);
+
+vector<morphMask> morphMaskFromMXStruct(const mxArray *mx) {
+	if (!mxIsStruct(mx)) {
+		mexErrMsgTxt("The input structure element must be a struct");
+	}
+
+	const mxArray *dataField = mxGetField(mx, 0, "data");
+	const mxArray *heightField = mxGetField(mx, 0, "heights");
+	unsigned char* maskData = (unsigned char*)mxGetData(dataField);
+
+	int strelCount = ((int*)mxGetData( mxGetField(mx, 0, "num") ))[0];
+	rect2d  *sizes = (rect2d*)mxGetData( mxGetField(mx, 0, "sizes") );
+	int    *isFlat = ((int*)mxGetData( mxGetField(mx, 0, "isFlat") ));
+	float *heights = (float*)mxGetData(heightField);
+
+	vector<morphMask> result;
+	for(int i = 0; i < strelCount; i++) {
+		int width  = sizes[i].width;
+		int height = sizes[i].height;
+
+		morphMask m;
+		if (height == 1) {
+			printf("hozmask %d", width);
+			result.push_back(createVHGWMask(width,  HORIZONTAL));
+		} else if (width == 1) {
+			printf("vertmask %d", height);
+			result.push_back(createVHGWMask(height, VERTICAL));
+		} else if (height == 3 && width == 3) {
+			unsigned char *d = new unsigned char[9];
+			memcpy(d, maskData, 9);
+			result.push_back(createTBTMask(d));
+		} else {
+			if (height == width) {
+				bool diag = isDiagonal(maskData, width, height);
+				bool bs = isBackslash(maskData, width, height);
+				if (diag) {
+					result.push_back(createVHGWMask(width, DIAGONAL_BACKSLASH));
+				} else if (bs) {
+					result.push_back(createVHGWMask(width, DIAGONAL_SLASH));
+				}
+			}
+		}
+		maskData += width*height;
+	}
+
+	return result;
+}
+
+bool isDiagonal(unsigned char* maskData, int width, int height) {
+	bool diagonal = true;
+	for (int w = 0; w < width; w++) {
+		for(int h = 0; h < height; h++) {
+			if ((h == w && maskData[width*h+w] == 0) ||
+				(h != w && maskData[width*h+w] == 1)) {
+				diagonal = false;
+			}
+		}
+	}
+	return diagonal;
+}
+
+bool isBackslash(unsigned char* maskData, int width, int height) {
+	bool bs = true;
+	for (int w = 0; w < width; w++) {
+		for(int h = 0; h < height; h++) {
+			if ((h == w && maskData[width*h+(width-1-w)] == 0) ||
+				(h != w && maskData[width*h+(width-1-w)] == 1)) {
+				bs = false;
+			}
+		}
+	}
+	return bs;
 }

@@ -30,7 +30,6 @@ struct morphMask {
 	int binaryValue;
 };
 
-
 void performErosion(const float * pSrc, int nSrcStep, float *pDst, int nDstStep, rect2d srcROI, 
                         morphMask mask, rect2d borderSize);
 

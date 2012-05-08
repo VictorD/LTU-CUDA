@@ -1,7 +1,10 @@
 #ifndef _LTU_CUDA_BASE_H_
 #define _LTU_CUDA_BASE_H_
 
-
+// Needed for compatibility MATLAB <-> VS2010
+#ifdef _CHAR16T
+#define CHAR16_T
+#endif
 
 #ifdef __cplusplus
 #define EXTERN extern "C"

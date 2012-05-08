@@ -77,9 +77,9 @@ morphMask createArbitraryMask(unsigned char *data, float* surface, int width, in
 }
 
 morphMask createTBTMask(unsigned char *data) {
-	for(int i = 0; i < 9; i++)
-		printf("data [%d] = %d", i, data[i]);
-	printf("---");
+	//for(int i = 0; i < 9; i++)
+	//	printf("data [%d] = %d", i, data[i]);
+	//printf("---");
     point2d anchor = {1,1};
     int pitch;
 	unsigned char *dev_mask_data = copyMaskDataToDevice(pitch, data, 3, 3);

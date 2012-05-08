@@ -10,10 +10,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 		mexErrMsgTxt("The number of input arguments must be 2, one image struct and one cuda structure element");
 	}
 
-	//lcudaStrel_8u se = mlcudaStructToStrel_8u(prhs[1]);
-	unsigned char *pr = (unsigned char *)mxGetData(prhs[1]);
-
-    const mxArray *mx = prhs[0];
+	const mxArray *mx = prhs[0];
+	const mxArray *maskMX = prhs[1];
     char dataType = mlcudaGetImageDataType(mx);
 
     // UINT8
@@ -22,18 +20,26 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     } 
     // FLOAT
     else*/
-	if (dataType == 1 && pr[0] > 0 && pr[0] < 512) {
+	if (dataType == 1) {
 		cudaImage image = imageFromMXStruct(mx);
+		vector<morphMask> masks = morphMaskFromMXStruct(maskMX);
 
-		rect2d border = {256,256};
+		if (masks.size() == 0) {
+			printf("No valid strel element found! Aborting erosion\n");
+			return;
+		}
+
+
+		rect2d border = {256,256}; // {mask.width , mask.height/2}
 		cudaPaddedImage tmp = createPaddedFromImage(image, border, 255.0f);
 
 		rect2d roi = {image.width, image.height};
 
 		/* DIAGONAL */
 		
-		morphMask diagMask = createVHGWMask(pr[0], DIAGONAL_BACKSLASH);
-		performErosion(getData(tmp), getPitch(tmp), getData(image), getPitch(image), roi, diagMask, tmp.border);
+		//morphMask diagMask = createVHGWMask(23, DIAGONAL_BACKSLASH);
+		morphMask theMask = masks.at(0);
+		performErosion(getData(tmp), getPitch(tmp), getData(image), getPitch(image), roi, theMask, tmp.border);
 		
 		
 		/* ROW FILTER */
