@@ -14,17 +14,14 @@ void mexFunction(int nlhs, mxArray *plhs[],
     else
         mexPrintf("\n");
 	*/
+	cudaImage image = allocImage(); //imageFromMXArray(mx);
+	plhs[0] = imageToMXStruct(image);
 
-    const mxArray *mx = prhs[0];
-    if (mxIsSingle(mx)) {
-		cudaImage image = imageFromMXArray(mx);
-		plhs[0] = imageToMXStruct(image);
-
-    } /*else if (mxIsUint8(mx)) {
+    //const mxArray *mx = prhs[0];
+    //if (mxIsSingle(mx)) {
+	/*else if (mxIsUint8(mx)) {
 	    cudaImage image = cudaImageFrom8bitMX(const mx);
       	plhs[0] = cudaMatrixToStruct(image);
 
-	} */ else {
-        printf("UNKNOWN. (This is bad)\n");
-    }
+	} */
 }

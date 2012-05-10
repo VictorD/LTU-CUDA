@@ -13,9 +13,16 @@ using namespace std;
 #include <mex.h>
 #include "../morphology/morphology.cuh"
 
+typedef struct {
+	cudaImage image;
+	int allocWidth;
+	int allocHeight;
+} matlabCudaMatrix;
+
+cudaImage allocImage();
 
 
-cudaImage imageFromMXArray(const mxArray *mx);
+void copyMXArrayToImage(cudaImage &image, const mxArray *mx);
 cudaImage imageFromMXStruct(const mxArray *mx);
 unsigned char mlcudaGetImageDataType(const mxArray* mx);
 

@@ -33,13 +33,23 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 		rect2d border = {256,256}; // {mask.width , mask.height/2}
 		cudaPaddedImage tmp = createPaddedFromImage(image, border, 255.0f);
 
-		rect2d roi = {image.width, image.height};
+
 
 		/* DIAGONAL */
 		
 		//morphMask diagMask = createVHGWMask(23, DIAGONAL_BACKSLASH);
-		morphMask theMask = masks.at(0);
-		performErosion(getData(tmp), getPitch(tmp), getData(image), getPitch(image), roi, theMask, tmp.border);
+		cudaImage *tmpPtr;
+		cudaImage *src = &tmp.image;
+		cudaImage *dst = &image;
+		rect2d roi = {image.width, image.height};
+/*		float *dst = getData(image);
+		for(int i = 0; i < masks.size(); i++) {*/
+			morphMask theMask = masks.at(0);
+			performErosion(getData(*src), getPitch(tmp), getData(*dst), getPitch(image), roi, theMask, tmp.border);
+			tmpPtr = src;
+			src = dst;
+			dst = tmpPtr;
+		//}
 		
 		
 		/* ROW FILTER */

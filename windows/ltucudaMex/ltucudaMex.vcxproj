@@ -130,6 +130,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="cudaimalloc.cpp" />
+    <ClCompile Include="cudaimcopy.cpp" />
     <ClCompile Include="cudaimerode.cpp" />
     <ClCompile Include="cudaimfree.cpp" />
     <ClCompile Include="cudaimget.cpp" />

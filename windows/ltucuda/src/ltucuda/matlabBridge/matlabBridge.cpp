@@ -6,16 +6,27 @@ unsigned char mlcudaGetImageDataType(const mxArray* mx) {
     return ((unsigned char*)mxGetData( mxGetField(mx, 0, "dataType") ))[0];
 }
 
-cudaImage imageFromMXArray(const mxArray *mx) {
+cudaImage allocImage() {
+	cudaImage tmp;
+	tmp.width = 2048;
+	tmp.height = 2048;
+	tmp.allocWidth = tmp.width;
+	tmp.allocHeight = tmp.height;
+	deviceAllocImage(tmp);
+	return tmp;
+}
+
+void copyMXArrayToImage(cudaImage &image, const mxArray *mx) {
+
+	image.width  = (int) mxGetM(mx);
+	image.height = (int) mxGetN(mx);
 	if (!mxIsSingle(mx)) {
-		mexErrMsgTxt("The input image must be of type single");
+		printf(" %d %d", image.width, image.height);
+		mexErrMsgTxt("The input image must be of type single!");
 	}
 
-	cudaImage tmp;
-	tmp.width  = (int) mxGetM(mx);
-	tmp.height = (int) mxGetN(mx);
-	deviceAllocImageWithData(tmp, (float*)mxGetData(mx));
-	return tmp;
+	copyHostToImage(image, (float*)mxGetData(mx));
+	//deviceAllocImageWithData(tmp, (float*)mxGetData(mx));
 }
 
 cudaImage imageFromMXStruct(const mxArray *mx) {
@@ -85,12 +96,13 @@ vector<morphMask> morphMaskFromMXStruct(const mxArray *mx) {
 
 		morphMask m;
 		if (height == 1) {
-			printf("hozmask %d", width);
+			//printf("hozmask %d\n", width);
 			result.push_back(createVHGWMask(width,  HORIZONTAL));
 		} else if (width == 1) {
-			printf("vertmask %d", height);
+			//printf("vertmask %d\n", height);
 			result.push_back(createVHGWMask(height, VERTICAL));
 		} else if (height == 3 && width == 3) {
+			//printf("tbtMask\n");
 			unsigned char *d = new unsigned char[9];
 			memcpy(d, maskData, 9);
 			result.push_back(createTBTMask(d));

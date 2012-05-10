@@ -33,6 +33,8 @@ typedef struct {
 	int height;
     unsigned int pitch;
     float *data;
+	int allocWidth;
+	int allocHeight;
 } cudaImage;
 
 typedef struct {
