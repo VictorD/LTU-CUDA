@@ -59,14 +59,24 @@ int main( int argc, const char* argv[] )
 		VHGW erosion: Horizontal, vertical, diagonal
 	*/
 	morphMask hozMask  = createVHGWMask(43,  HORIZONTAL);
-	morphMask vertMask = createVHGWMask(43, VERTICAL);
-	morphMask diagMask = createVHGWMask(51, DIAGONAL_BACKSLASH);
+	morphMask slashMask = createVHGWMask(43, DIAGONAL_SLASH);
+	morphMask bsMask = createVHGWMask(51, DIAGONAL_BACKSLASH);
+	morphMask vertMask = createVHGWMask(51, VERTICAL);
 	//testErosion(paddedImage, output, imageSize, hozMask, "horizontalVHGW.pgm", "VHGW Horizontal kernel"); // replaced with TVT below
-	testErosion(paddedImage, output, imageSize, diagMask, "diagonalVHGW.pgm", "VHGW Diagonal kernel");
-	testErosion(paddedImage, output, imageSize, vertMask, "verticalVHGW.pgm", "VHGW Vertical kernel");	
+	testErosion(paddedImage, output, imageSize, slashMask, "slashVHGW.pgm", "VHGW Diagonal kernel");
+	//testErosion(paddedImage, output, imageSize, bsMask, "bsVHGW.pgm", "VHGW Backslash kernel");	
+
+	cudaPaddedImage paddedOut = createPaddedImage(border, imageSize.width, imageSize.height, 255.0f);
+	performErosion(getData(paddedImage), getPitch(paddedImage), getBorderOffsetImagePtr(paddedOut), getPitch(paddedOut), imageSize, slashMask, border);
+	 
+	float *host_out = copyImageToHost(paddedOut.image);
+	printf("output width: %d , height: %d\n", paddedOut.image.width, paddedOut.image.height);
+	savePGM("testEdges.pgm", host_out, paddedOut.image.width, paddedOut.image.height);
+	freeHost(host_out, PINNED);
+
 
 	// Horizontal Erosion Test Mark 2: Transpose + Vertical+ Transpose
-	cudaImage flippedImage = createTransposedImage(paddedImage.image);
+	/*cudaImage flippedImage = createTransposedImage(paddedImage.image);
 	cudaFree(getData(paddedImage));
 
 	rect2d flippedSize = {imageSize.height, imageSize.width};
@@ -87,9 +97,10 @@ int main( int argc, const char* argv[] )
 
 	cudaFree(getData(flippedImage));
 	cudaFree(getData(flippedOut));
-    cudaFree(hozMask.data);
+    cudaFree(hozMask.data);*/
 	cudaFree(vertMask.data);
-	cudaFree(diagMask.data);
+	cudaFree(slashMask.data);
+	cudaFree(bsMask.data);
 	cudaFree(output.data);
 
 	printf("After:");

@@ -115,8 +115,8 @@ __global__ void _verticalVHGWKernel(const dataType *img, int imgStep, dataType *
 }
 
 template <class dataType, morphOperation MOP>
-__global__ void _diagonalVHGWKernel(const dataType *img, int imgStep, dataType *result, int resultStep, unsigned int maxSteps, unsigned int width, unsigned int height,
-                                        unsigned int size, rect2d borderSize, bool direction) {
+__global__ void _diagonalBackslashVHGWKernel(const dataType *img, int imgStep, dataType *result, int resultStep, unsigned int maxSteps, unsigned int width, unsigned int height,
+                                        unsigned int size, rect2d borderSize) {
 	const int x      = __umul24(blockIdx.x, blockDim.x) + threadIdx.x -(size-1)/2;
 
 	const unsigned int step   = __umul24(blockIdx.y, blockDim.y) + threadIdx.y;
@@ -136,20 +136,12 @@ __global__ void _diagonalVHGWKernel(const dataType *img, int imgStep, dataType *
     if (MOP == ERODE) {
         for(k=1;k<size; ++k) {
 			int minIndex = (center-k)*imgStep-k;
-            nextMin = (minIndex > 0) ? lineIn[(center-k)*imgStep-k] : 255;
+            nextMin = (minIndex > 0) ? lineIn[minIndex] : 255;
             minarray[size-1-k] = min(minarray[size-k], nextMin);
 
             nextMin = lineIn[(center+k)*imgStep+k];
             minarray[size-1+k] = min(minarray[size+k-2], nextMin);
         }
-    } else {
-       /* for(k=1;k<size; ++k) {
-            nextMin = lineIn[__umul24(center-k,imgStep) - k];
-            minarray[size-1-k] = max(minarray[size-k], nextMin);
-        
-            nextMin = lineIn[__umul24(center+k,imgStep) + k];
-            minarray[size-1+k] = max(minarray[size+k-2], nextMin);
-        }*/
     }
 
 	dataType *lineOut = result + starty*resultStep + x-(size-1);
@@ -166,12 +158,48 @@ __global__ void _diagonalVHGWKernel(const dataType *img, int imgStep, dataType *
 			lineOut[k*resultStep+k] = minMax<dataType, MOP>(minarray[k], minarray[k+size-1]);
 		}
 	}
+}
 
-	/*if (x > width) // Result might not have any border!
-		return;
+template <class dataType, morphOperation MOP>
+__global__ void _diagonalSlashVHGWKernel(const dataType *img, int imgStep, dataType *result, int resultStep, unsigned int maxSteps, 
+                                        unsigned int width, unsigned int height, unsigned int size, rect2d borderSize) {
+    const int x      = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
+	const unsigned int step   = __umul24(blockIdx.y, blockDim.y) + threadIdx.y;
+    const int starty = __umul24(step,size);
+
+    if (x >= width+(size-1) || starty > height)
+        return;
+
+    const dataType *lineIn	  = img+x;
 	dataType *lineOut = result + starty*resultStep + x;
-	int diffX = width - x;
-    int diffY = height - starty;*/
+    const unsigned int center = starty + (size-1);
+
+    dataType minarray[512];
+    minarray[size-1] = lineIn[center*imgStep];
+
+    dataType nextMin;
+    int k;
+    if (MOP == ERODE) {
+        for(k=1;k<size; ++k) {
+			int minIndex = (center-k)*imgStep+k;
+            nextMin = (minIndex > 0) ? lineIn[minIndex] : 255;
+            minarray[size-1-k] = min(minarray[size-k], nextMin);
+
+            nextMin = lineIn[(center+k)*imgStep-k];
+            minarray[size-1+k] = min(minarray[size+k-2], nextMin);
+        }
+    }
+
+
+
+//	if (x >= width+(size-1)/2 || starty >= height)
+		//return;
+	
+	for(k=0; k < size; ++k) {
+		if (x-k < width && starty+k < height) {
+			lineOut[k*resultStep-k] = minMax<dataType, MOP>(minarray[k], minarray[k+size-1]);
+		}
+    }
 }
  
 template <class dataType, morphOperation MOP>
@@ -201,14 +229,22 @@ int _globalVHGW(const dataType * img, int imgStep, dataType * result, int result
 				_horizontalVHGWKernel<dataType, MOP><<<gridSize, blockSize>>>(img, imgStep,result, resultStep, steps, width, height, size, borderSize);
 			}
 			break;
-		// SLASH or BACKSLASH
+		case DIAGONAL_SLASH: {
+				size = mask.height;
+				PRINTF("MASK SIZE IS: %d\n", size);
+				steps = (height+5*(size-1))/size;
+				dim3 gridSize((width+5*(size-1)+128-1)/128, (steps+2-1)/2);
+				dim3 blockSize(128, 2);
+				_diagonalSlashVHGWKernel<dataType, MOP><<<gridSize,blockSize>>>(img, imgStep,result, resultStep, steps, width, height, size, borderSize);
+		}
+		break;
 		default: { 
 				size = mask.height;
 				PRINTF("MASK SIZE IS: %d\n", size);
 				steps = (height+size-1)/size;
 				dim3 gridSize((width+2*(size-1)+128-1)/128, (steps+2-1)/2);
 				dim3 blockSize(128, 2);
-				_diagonalVHGWKernel<dataType, MOP><<<gridSize,blockSize>>>(img, imgStep,result, resultStep, steps, width, height, size, borderSize, mask.direction);
+				_diagonalBackslashVHGWKernel<dataType, MOP><<<gridSize,blockSize>>>(img, imgStep,result, resultStep, steps, width, height, size, borderSize);
 			}
 			break;
     }

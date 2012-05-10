@@ -130,7 +130,6 @@ void exitOnError(const char *whereAt) {
     if(error != cudaSuccess)
         {
             printf("CUDA error at %s: %s\n", whereAt, cudaGetErrorString(error));
-            //exit(-1);
-			system("pause");
+            exit(-1);
         }
 }
