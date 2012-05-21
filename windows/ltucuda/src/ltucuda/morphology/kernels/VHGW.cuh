@@ -18,7 +18,7 @@ __global__ void _horizontalVHGWKernel(const dataType *img, int imgStep, dataType
     dataType *lineOut      = result+y*resultStep;
     const unsigned int center  = startx + (size-1);
 
-    dataType minarray[512];
+    dataType minarray[256+1];
     minarray[size-1] = lineIn[center];
 
     dataType nextMin;
@@ -224,8 +224,8 @@ int _globalVHGW(const dataType * img, int imgStep, dataType * result, int result
 		case HORIZONTAL: {
 				size = mask.width;
 				steps = (width+size-1)/size;
-				dim3 gridSize((steps+128-1)/128, (height+2-1)/2);
-				dim3 blockSize(128, 2);
+				dim3 gridSize((steps+128-1)/128, height);
+				dim3 blockSize(128, 1);
 				_horizontalVHGWKernel<dataType, MOP><<<gridSize, blockSize>>>(img, imgStep,result, resultStep, steps, width, height, size, borderSize);
 			}
 			break;

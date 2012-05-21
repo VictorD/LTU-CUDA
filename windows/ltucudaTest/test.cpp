@@ -31,12 +31,12 @@ int main( int argc, const char* argv[] )
 
 	float maxFloat = std::numeric_limits<float>::max();
 	// Prepad border bigger than we need for simplicity and profiling (256px border is silly big; we can have an SE length of 512).	
-	rect2d border = { 256,256 }; 
+	rect2d border = { 256,0 }; 
 	cudaPaddedImage paddedImage = loadPaddedImageToDevice("../images/test.pgm", border, 255.0f);
 	rect2d imageSize = getNoBorderSize(paddedImage);
 	cudaImage output = createImage(imageSize.width, imageSize.height);
 	
-	cudaImage test = loadImageToDevice("../images/test.pgm");
+	/*cudaImage test = loadImageToDevice("../images/test.pgm");
 	cudaImage test1 = cloneImage(test);
 	cudaPaddedImage test2 = createPaddedFromImage(test, border, 255.0f);
 
@@ -47,25 +47,27 @@ int main( int argc, const char* argv[] )
 	cudaFree(getData(test));
 	cudaFree(getData(test1));
 	cudaFree(getData(test2));
-
+	*/
 	/*
 		Diagonal erosion 3x3
 	*/
-	unsigned char diag[] = {1,0,0,0,1,0,0,0,1};
-	morphMask diag3x3mask = createTBTMask(diag);
-	testErosion(paddedImage, output, imageSize, diag3x3mask, "diag3x3.pgm", "Diagonal VHGW Test");
-
+	/*
+		unsigned char diag[] = {1,0,0,0,1,0,0,0,1};
+		morphMask diag3x3mask = createTBTMask(diag);
+		testErosion(paddedImage, output, imageSize, diag3x3mask, "diag3x3.pgm", "Diagonal VHGW Test");
+	*/
 	/* 
 		VHGW erosion: Horizontal, vertical, diagonal
 	*/
 	morphMask hozMask  = createVHGWMask(43,  HORIZONTAL);
-	morphMask slashMask = createVHGWMask(43, DIAGONAL_SLASH);
+	testErosion(paddedImage, output, imageSize, hozMask, "horizontalVHGW.pgm", "VHGW Horizontal kernel"); // replaced with TVT below
+	cudaFree(getData(paddedImage));
+	/*morphMask slashMask = createVHGWMask(43, DIAGONAL_SLASH);
 	morphMask bsMask = createVHGWMask(51, DIAGONAL_BACKSLASH);
 	morphMask vertMask = createVHGWMask(51, VERTICAL);
-	//testErosion(paddedImage, output, imageSize, hozMask, "horizontalVHGW.pgm", "VHGW Horizontal kernel"); // replaced with TVT below
+	
 	testErosion(paddedImage, output, imageSize, slashMask, "slashVHGW.pgm", "VHGW Diagonal kernel");
 	//testErosion(paddedImage, output, imageSize, bsMask, "bsVHGW.pgm", "VHGW Backslash kernel");	
-
 	cudaPaddedImage paddedOut = createPaddedImage(border, imageSize.width, imageSize.height, 255.0f);
 	performErosion(getData(paddedImage), getPitch(paddedImage), getBorderOffsetImagePtr(paddedOut), getPitch(paddedOut), imageSize, slashMask, border);
 	 
@@ -73,7 +75,7 @@ int main( int argc, const char* argv[] )
 	printf("output width: %d , height: %d\n", paddedOut.image.width, paddedOut.image.height);
 	savePGM("testEdges.pgm", host_out, paddedOut.image.width, paddedOut.image.height);
 	freeHost(host_out, PINNED);
-
+	*/
 
 	// Horizontal Erosion Test Mark 2: Transpose + Vertical+ Transpose
 	/*cudaImage flippedImage = createTransposedImage(paddedImage.image);
@@ -98,9 +100,9 @@ int main( int argc, const char* argv[] )
 	cudaFree(getData(flippedImage));
 	cudaFree(getData(flippedOut));
     cudaFree(hozMask.data);*/
-	cudaFree(vertMask.data);
+	/*cudaFree(vertMask.data);
 	cudaFree(slashMask.data);
-	cudaFree(bsMask.data);
+	cudaFree(bsMask.data);*/
 	cudaFree(output.data);
 
 	printf("After:");

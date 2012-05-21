@@ -1,24 +1,33 @@
-inputImage = single(imread('square.pgm'));
-inputImage = inputImage(1:2048, 1:2048);
+inputImage = single(imread('square.pgm'))/255.0;
+inputImage = inputImage(1:1472, 1:1472);
+inputImage = padarray(inputImage, [288 288], 1);
 
-CUTIME_D = 1:99;
-MATIME_D = 1:99;
+CUTIME = 1:99;
+MATIME = 1:99;
 
-for i=37
+for i=1:34
 cudaimfree(); % reset device to be sure
 
-mstrel = strel('line', 2*i+1, 45); %strel('line', 2*i+1, -45);
+matstrel = strel('octagon', 3*(2*i+1));
+
+tmp = matstrel.getsequence;
 lcuda = cudaimalloc();
 tic;
 cudaimcopy(lcuda, inputImage);
-cudaimerode(lcuda, cudastrel(mstrel));
+for j=1:length(tmp)
+cudaimerode(lcuda, cudastrel(tmp(j)));
+end
 cudres = cudaimget(lcuda);
-CUTIME_D(i-2) = toc;
+CUTIME(i) = toc;
 cudaimfree(lcuda);
 
 tic;
-matres = imerode(inputImage, mstrel);
-MATIME_D(i-2) = toc;
+matres = imerode(inputImage, matstrel);
+toc
+
+
+
+MATIME(i) = toc;
 
 isequal(matres,cudres)
 if (isequal(matres,cudres) == 0)
